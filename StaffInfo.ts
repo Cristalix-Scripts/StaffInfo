@@ -28,18 +28,20 @@ scheduler.scheduleAtFixedRate(function() {
     if (timestamp == 0) return
     config.allTime = allTime
     Config.save(nickname, config)
-}, 10, 10, TimeUnit.SECONDS)
+}, 0, 10, TimeUnit.SECONDS)
 
 Events.on(this, 'game_tick_pre', function() {
     Display.setTitle('「 Ник: ' + nickname + ' | FPS: ' + Draw.getFps() + ' | ' + UtilTime.now() + ' 」')
 })
 
 Events.on(this, 'server_connect', function() {
-    allTime = config.allTime
+    currentTime = 0
     timestamp = System.currentTimeMillis()
 })
 
 function buildBoard() {
+    if (timestamp == 0) return
+
     const res = Draw.getResolution()
     const width = res.getScaledWidth()
 
