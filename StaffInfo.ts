@@ -68,13 +68,13 @@ Events.on(this, 'chat_send', function(event) {
     if (!args[0].contains('/si') && !args[0].contains('/staffinfo')) return
     switch (args[1]) {
         case 'reset': {
-            args.cancelled = true
+            event.cancelled = true
             config.allTime = 0
             Config.save(nickname, config)
             break
         }
         case 'rainbow': {
-            args.cancelled = true
+            event.cancelled = true
             if (isRainbow) {
                 config.isRainbow = false
                 isRainbow = false
