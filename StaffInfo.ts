@@ -12,7 +12,7 @@
 */
 
 const nickname = Player.getName()
-const config = Config.load(nickname);
+const config = Config.load(nickname)
 const scheduler = Executors.newSingleThreadScheduledExecutor()
 
 if (!config.allTime) config.allTime = 0
@@ -24,31 +24,35 @@ var allTime = config.allTime
 var timestamp = 0
 var currentTime = 0
 
+scheduler.scheduleAtFixedRate(function() {
+    if (timestamp == 0) return
+    config.allTime = allTime
+    Config.save(nickname, config)
+}, 10, 10, TimeUnit.SECONDS)
+
 Events.on(this, 'game_tick_pre', function() {
     Display.setTitle('「 Ник: ' + nickname + ' | FPS: ' + Draw.getFps() + ' | ' + UtilTime.now() + ' 」')
 })
 
 Events.on(this, 'server_connect', function() {
+    allTime = config.allTime
     timestamp = System.currentTimeMillis()
-    scheduler.scheduleAtFixedRate(function() {
-        config.allTime = allTime
-        Config.save(nickname, config)
-    }, 0, 30, TimeUnit.SECONDS)
 })
 
 function buildBoard() {
-    if (timestamp == 0) return
-
-    const res = Draw.getResolution();
+    const res = Draw.getResolution()
     const width = res.getScaledWidth()
 
-    currentTime = System.currentTimeMillis() - timestamp
-    allTime += currentTime
+    const now = System.currentTimeMillis()
+    const a = now - timestamp;
+    const delta = a - currentTime
+    currentTime = a
+    allTime += delta
 
     let allTimeFormatted = UtilTime.makeStr(allTime)
     let currentTimeFormatted = UtilTime.makeStr(currentTime)
 
-    var color = 0xCFCCC2
+    let color = 0xCFCCC2
     if (isRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
 
     Draw.drawRect(width - 96, 0, width - 1, 55, 0xCC000000)
@@ -84,15 +88,8 @@ Events.on(this, 'chat_send', function(event) {
         }
         case 'rainbow': {
             event.cancelled = true
-            if (isRainbow) {
-                config.isRainbow = false
-                isRainbow = false
-                Config.save(nickname, config)
-            } else {
-                config.isRainbow = true
-                isRainbow = true
-                Config.save(nickname, config)
-            }
+            config.isRainbow = (isRainbow ^= true)
+            Config.save(nickname, config)
             break
         }
         default:
