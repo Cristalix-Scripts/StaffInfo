@@ -24,7 +24,7 @@ var timestamp = 0
 var currentTime = 0
 
 Events.on(this, 'game_tick_pre', function() {
-    Display.setTitle("「 Ник: " + nickname + " | FPS: " + Draw.getFps() + " | " + UtilTime.now() + " 」")
+    Display.setTitle('「 Ник: ' + nickname + ' | FPS: ' + Draw.getFps() + ' | ' + UtilTime.now() + ' 」')
 })
 
 Events.on(this, 'server_connect', function() {
@@ -51,9 +51,9 @@ function buildBoard() {
     if (isRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
 
     Draw.drawRect(width - 96, 0, width - 1, 55, 0xCC000000)
-    Draw.drawString("Весь онлайн", width - 92, 4, color)
+    Draw.drawString('Весь онлайн', width - 92, 4, color)
     Draw.drawString(allTimeFormatted, width - 86, 16, color)
-    Draw.drawString("Текущий онлайн", width - 92, 28, color)
+    Draw.drawString('Текущий онлайн', width - 92, 28, color)
     Draw.drawString(currentTimeFormatted, width - 86, 40, color)
 }
 
@@ -63,10 +63,9 @@ Events.on(this, 'gui_overlay_render', function() {
 
 Events.on(this, 'chat_send', function(event) {
     if (!event.command) return
-    const args = event.message.split(" ")
-    if (args.length == 0) return
+    const args = event.message.split(' ')
 
-    if (args[0] != "/si" && args[0] != "/staffinfo") return
+    if (!args[0].contains('/si') && !args[0].contains('/staffinfo')) return
     switch (args[1]) {
         case 'reset': {
             args.cancelled = true
