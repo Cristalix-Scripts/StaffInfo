@@ -67,6 +67,12 @@ Events.on(this, 'chat_send', function(event) {
 
     if (!args[0].contains('/si') && !args[0].contains('/staffinfo')) return
     switch (args[1]) {
+        case 'save': {
+            event.cancelled = true
+            config.allTime = allTime
+            Config.save(nickname, config)
+            break
+        }
         case 'reset': {
             event.cancelled = true
             allTime = 0
