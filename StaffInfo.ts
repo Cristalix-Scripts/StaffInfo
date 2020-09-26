@@ -65,7 +65,7 @@ Events.on(this, 'chat_send', function(event) {
     if (!event.command) return
     const args = event.message.split(' ')
 
-    if (!args[0].contains('/si') && !args[0].contains('/staffinfo')) return
+    if (args[0] != '/si' && args[0] != '/staffinfo') return
     switch (args[1]) {
         case 'save': {
             event.cancelled = true
