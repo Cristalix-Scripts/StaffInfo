@@ -24,7 +24,7 @@ var timestamp = 0
 var currentTime = 0
 
 Events.on(this, 'game_tick_pre', function() {
-    Display.setTitle('「 Ник: ' + nickname + ' | FPS: ' + Draw.getFps() + ' | ' + UtilTime.now() + ' 」')
+    Display.setTitle('「 Ник: ${nickname} | FPS: ' + Draw.getFps() + ' | ' + UtilTime.now() + ' 」')
 })
 
 Events.on(this, 'server_connect', function() {
@@ -69,6 +69,8 @@ Events.on(this, 'chat_send', function(event) {
     switch (args[1]) {
         case 'reset': {
             event.cancelled = true
+            allTime = 0
+            timestamp = System.currentTimeMillis()
             config.allTime = 0
             Config.save(nickname, config)
             break
