@@ -82,6 +82,7 @@ Events.on(this, 'chat_send', function(event) {
         }
         case 'reset': {
             event.cancelled = true
+            currentTime = 0
             allTime = 0
             timestamp = System.currentTimeMillis()
             config.allTime = 0
