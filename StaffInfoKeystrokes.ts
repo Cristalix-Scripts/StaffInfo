@@ -24,9 +24,11 @@ const config = Config.load(nickname)
 const scheduler = Executors.newSingleThreadScheduledExecutor()
 
 if (!config.allTime) config.allTime = 0
-if (!config.isRainbow) config.isRainbow = false
+if (!config.isStaffInfoRainbow) config.isStaffInfoRainbow = false
+if (!config.isKeystrokesEnabled) config.isKeystrokesEnabled = true
+if (!config.isKeystrokesRainbow) config.isKeystrokesRainbow = false
 
-var isRainbow = config.isRainbow
+var isStaffInfoRainbow = config.isStaffInfoRainbow
 var isKeystrokesEnabled = config.isKeystrokesEnabled
 var isKeystrokesRainbow = config.isKeystrokesRainbow
 
@@ -65,7 +67,7 @@ function buildBoard() {
     let currentTimeFormatted = UtilTime.makeStr(currentTime)
 
     let color = 0xCFCCC2
-    if (isRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
+    if (isStaffInfoRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
 
     Draw.drawRect(width - 96, 0, width - 1, 55, 0xCC000000)
     Draw.drawString('Весь онлайн', width - 92, 4, color)
@@ -112,7 +114,7 @@ Events.on(this, 'chat_send', function(event) {
             }
             case 'rainbow': {
                 event.cancelled = true
-                config.isRainbow = (isRainbow ^= true)
+                config.isRainbow = (isStaffInfoRainbow ^= true)
                 Config.save(nickname, config)
                 break
             }
