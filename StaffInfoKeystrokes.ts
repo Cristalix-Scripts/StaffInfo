@@ -27,14 +27,19 @@ if (!config.allTime) config.allTime = 0
 if (!config.isStaffInfoRainbow) config.isStaffInfoRainbow = false
 if (!config.isKeystrokesEnabled) config.isKeystrokesEnabled = true
 if (!config.isKeystrokesRainbow) config.isKeystrokesRainbow = false
+if (!config.isKeystrokesLeft) config.isKeystrokesLeft = false
 
 var isStaffInfoRainbow = config.isStaffInfoRainbow
 var isKeystrokesEnabled = config.isKeystrokesEnabled
 var isKeystrokesRainbow = config.isKeystrokesRainbow
+var isKeystrokesLeft = config.isKeystrokesLeft
 
 var allTime = config.allTime
 var timestamp = 0
 var currentTime = 0
+
+var leftClicks = 0
+let rightClicks = 0
 
 scheduler.scheduleAtFixedRate(function() {
     if (timestamp == 0) return
@@ -78,11 +83,28 @@ function buildBoard() {
 
 function buildKeystrokes() {
     if (isKeystrokesEnabled) {
-        let keyStrokesBackColor = color //свой цвет
-        let keyStrokesTextColor = color //свой цвет
-        if (isKeystrokesRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1) //Свой rgb
+        if (isKeystrokesRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
+        Draw.drawRect(50, 105, 30, 125, 0xCC000000)
+        Draw.drawString('§'.concat(Keyboard.isKeyDown(31) ? 'a' : 'c').concat('S'), 38, 112, 0)
 
-        //тут отрисовываешь как выше по примеру
+        Draw.drawRect(50, 80, 30, 100, 0xCC000000)
+        Draw.drawString('§'.concat(Keyboard.isKeyDown(17) ? 'a' : 'c').concat('W'), 38, 87, 0)
+
+        Draw.drawRect(75, 105, 55, 125, 0xCC000000)
+        Draw.drawString('§'.concat(Keyboard.isKeyDown(32) ? 'a' : 'c').concat('A'), 63, 112, 0)
+
+        Draw.drawRect(25, 105, 5, 125, 0xCC000000)
+        Draw.drawString('§'.concat(Keyboard.isKeyDown(30) ? 'a' : 'c').concat('D'), 13, 112, 0)
+
+        Draw.drawRect(75, 130, 5, 150, 0xCC000000)
+        Draw.drawString('§'.concat(Keyboard.isKeyDown(57) ? 'a' : 'c').concat('SPACE'), 26, 137, 0)
+
+        Draw.drawRect(37, 155, 5, 175, 0xCC000000)
+        Draw.drawString('§'.concat(Mouse.isButtonDown(0) ? 'a' : 'c').concat(leftClicks == 0 ? 'LMB' : leftClicks), (leftClicks == 1 ? 7 : 13), 162, 0)
+
+        Draw.drawRect(75, 155, 42, 175, 0xCC000000)
+        Draw.drawString('§'.concat(Mouse.isButtonDown(1) ? 'a' : 'c').concat(rightClicks == 0 ? 'RMB' : rightClicks), (rightClicks == 0 ? 50 : 56), 162, 0)
+
     }
 }
 
@@ -95,7 +117,7 @@ Events.on(this, 'chat_send', function(event) {
     if (!event.command) return
     const args = event.message.split(' ')
 
-    if (args[0] != '/si' && args[0] != '/staffinfo') {
+    if (args[0] == '/si' || args[0] == '/staffinfo') {
         switch (args[1]) {
             case 'save': {
                 event.cancelled = true
@@ -124,7 +146,7 @@ Events.on(this, 'chat_send', function(event) {
         return
     }
 
-    if (args[0] != '/ks' && args[0] != '/keystrokes') {
+    if (args[0] == '/ks' || args[0] == '/keystrokes') {
         switch (args[1]) {
             case 'toggle': {
                 event.cancelled = true
@@ -135,6 +157,12 @@ Events.on(this, 'chat_send', function(event) {
             case 'rainbow': {
                 event.cancelled = true
                 config.isKeystrokesRainbow = (isKeystrokesRainbow ^= true)
+                Config.save(nickname, config)
+                break
+            }
+            case 'position': {
+                event.cancelled = true
+                config.isKeystrokesLeft = (isKeystrokesLeft ^= true)
                 Config.save(nickname, config)
                 break
             }
