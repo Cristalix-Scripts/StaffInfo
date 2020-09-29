@@ -7,15 +7,12 @@
          ███     ███       ███    ███   ███          ███             ███  ███   ███   ███        ███    ███
    ▄█    ███     ███       ███    ███   ███          ███             ███  ███   ███   ███        ███    ███
  ▄████████▀     ▄████▀     ███    █▀    ███          ███             █▀    ▀█   █▀    ███         ▀██████▀
-
-
         ██╗  ██╗███████╗██╗   ██╗    ███████╗████████╗██████╗  ██████╗ ██╗  ██╗███████╗███████╗
         ██║ ██╔╝██╔════╝╚██╗ ██╔╝    ██╔════╝╚══██╔══╝██╔══██╗██╔═══██╗██║ ██╔╝██╔════╝██╔════╝
         █████╔╝ █████╗   ╚████╔╝     ███████╗   ██║   ██████╔╝██║   ██║█████╔╝ █████╗  ███████╗
         ██╔═██╗ ██╔══╝    ╚██╔╝      ╚════██║   ██║   ██╔══██╗██║   ██║██╔═██╗ ██╔══╝  ╚════██║
         ██║  ██╗███████╗   ██║       ███████║   ██║   ██║  ██║╚██████╔╝██║  ██╗███████╗███████║
         ╚═╝  ╚═╝╚══════╝   ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝
-
                             https://github.com/Nartsissov | https://github.com/xpepelok
 */
 
@@ -28,11 +25,17 @@ if (!config.isStaffInfoRainbow) config.isStaffInfoRainbow = false
 if (!config.isKeystrokesEnabled) config.isKeystrokesEnabled = true
 if (!config.isKeystrokesRainbow) config.isKeystrokesRainbow = false
 if (!config.isKeystrokesLeft) config.isKeystrokesLeft = false
+if (!config.isCoordsEnabled) config.isCoordsEnabled = true
+if (!config.isCoordsRainbow) config.isCoordsRainbow = false
+if (!config.isStaffInfoEnabled) config.isStaffInfoEnabled = true
 
 var isStaffInfoRainbow = config.isStaffInfoRainbow
 var isKeystrokesEnabled = config.isKeystrokesEnabled
 var isKeystrokesRainbow = config.isKeystrokesRainbow
 var isKeystrokesLeft = config.isKeystrokesLeft
+var isCoordsEnabled = config.isCoordsEnabled
+var isCoordsRainbow = config.isCoordsRainbow
+var isStaffInfoEnabled = config.isStaffInfoEnabled
 
 var allTime = config.allTime
 var timestamp = 0
@@ -69,15 +72,16 @@ function buildBoard() {
 
     let allTimeFormatted = UtilTime.makeStr(allTime)
     let currentTimeFormatted = UtilTime.makeStr(currentTime)
+    if (isStaffInfoEnabled) {
+        let color = 0xCFCCC2
+        if (isStaffInfoRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
 
-    let color = 0xCFCCC2
-    if (isStaffInfoRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
-
-    Draw.drawRect(width - 96, 0, width - 1, 55, 0xCC000000)
-    Draw.drawString('Весь онлайн', width - 92, 4, color)
-    Draw.drawString(allTimeFormatted, width - 86, 16, color)
-    Draw.drawString('Текущий онлайн', width - 92, 28, color)
-    Draw.drawString(currentTimeFormatted, width - 86, 40, color)
+        Draw.drawRect(width - 96, 0, width - 1, 55, 0xCC000000)
+        Draw.drawString('Весь онлайн', width - 92, 4, color)
+        Draw.drawString(allTimeFormatted, width - 86, 16, color)
+        Draw.drawString('Текущий онлайн', width - 92, 28, color)
+        Draw.drawString(currentTimeFormatted, width - 86, 40, color)
+    }
 }
 
 function buildKeystrokes() {
@@ -85,33 +89,42 @@ function buildKeystrokes() {
         let color = 0xCFCCC2
         let pressColor = 0x606C6E
         if (isKeystrokesRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
-        Draw.drawRect(50, 105, 30, 125, 0xCC000000)
-        Draw.drawString('S', 38, 112, Keyboard.isKeyDown(31) ? pressColor : color)
+        Draw.drawRect(50, 85, 30, 105, 0xCC000000)
+        Draw.drawString('S', 38, 92, Keyboard.isKeyDown(31) ? pressColor : color)
 
-        Draw.drawRect(50, 80, 30, 100, 0xCC000000)
-        Draw.drawString('W', 38, 87, Keyboard.isKeyDown(17) ? pressColor : color)
+        Draw.drawRect(50, 60, 30, 80, 0xCC000000)
+        Draw.drawString('W', 38, 67, Keyboard.isKeyDown(17) ? pressColor : color)
 
-        Draw.drawRect(75, 105, 55, 125, 0xCC000000)
-        Draw.drawString('A', 63, 112, Keyboard.isKeyDown(32) ? pressColor : color)
+        Draw.drawRect(75, 85, 55, 105, 0xCC000000)
+        Draw.drawString('A', 63, 92, Keyboard.isKeyDown(32) ? pressColor : color)
 
-        Draw.drawRect(25, 105, 5, 125, 0xCC000000)
-        Draw.drawString('D', 13, 112, Keyboard.isKeyDown(30) ? pressColor : color)
+        Draw.drawRect(25, 85, 5, 105, 0xCC000000)
+        Draw.drawString('D', 13, 92, Keyboard.isKeyDown(30) ? pressColor : color)
 
-        Draw.drawRect(75, 130, 5, 150, 0xCC000000)
-        Draw.drawString('SPACE', 26, 137, Keyboard.isKeyDown(57) ? pressColor : color)
+        Draw.drawRect(75, 110, 5, 130, 0xCC000000)
+        Draw.drawString('SPACE', 26, 117, Keyboard.isKeyDown(57) ? pressColor : color)
 
-        Draw.drawRect(37, 155, 5, 175, 0xCC000000)
-        Draw.drawString('LMB', 13, 162, Mouse.isButtonDown(0) ? pressColor : color)
+        Draw.drawRect(37, 135, 5, 155, 0xCC000000)
+        Draw.drawString('LMB', 13, 142, Mouse.isButtonDown(0) ? pressColor : color)
 
-        Draw.drawRect(75, 155, 42, 175, 0xCC000000)
-        Draw.drawString('RMB', 50, 162, Mouse.isButtonDown(1) ? pressColor : color)
+        Draw.drawRect(75, 135, 42, 155, 0xCC000000)
+        Draw.drawString('RMB', 50, 142, Mouse.isButtonDown(1) ? pressColor : color)
 
+    }
+}
+
+function BIGKINGSmallDick() {
+    if (isCoordsEnabled) {
+        var color = 0xfae1a7
+        if (isCoordsRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
+        Draw.drawString("x: " + Math.floor(Player.getPosX()), 4, 4, color) + Draw.drawString("Y: " + Math.floor(Player.getPosY()), 4, 16, color) + Draw.drawString("Z: " + Math.floor(Player.getPosZ()), 4, 28, color) + Draw.drawString("Yaw: " + Math.floor(Player.getYaw()), 4, 40, color) + Draw.drawString("Pitch: " + Math.floor(Player.getPitch()), 4, 52, color)
     }
 }
 
 Events.on(this, 'gui_overlay_render', function() {
     buildBoard()
     buildKeystrokes()
+    BIGKINGSmallDick()
 })
 
 Events.on(this, 'chat_send', function(event) {
@@ -141,6 +154,12 @@ Events.on(this, 'chat_send', function(event) {
                 Config.save(nickname, config)
                 break
             }
+            case 'toggle': {
+                event.cancelled = true
+                config.isStaffInfoEnabled = (isStaffInfoEnabled ^= true)
+                Config.save(nickname, config)
+                break
+            }
             default:
                 break
         }
@@ -164,6 +183,25 @@ Events.on(this, 'chat_send', function(event) {
             case 'position': {
                 event.cancelled = true
                 config.isKeystrokesLeft = (isKeystrokesLeft ^= true)
+                Config.save(nickname, config)
+                break
+            }
+            default:
+                break
+        }
+        return
+    }
+    if (args[0] == '/coords' || args[0] == '/coordinates') {
+        switch (args[1]) {
+            case 'toggle': {
+                event.cancelled = true
+                config.isCoordsEnabled = (isCoordsEnabled ^= true)
+                Config.save(nickname, config)
+                break
+            }
+            case 'rainbow': {
+                event.cancelled = true
+                config.isCoordinatesRainbow = (isCoordsRainbow ^= true)
                 Config.save(nickname, config)
                 break
             }
