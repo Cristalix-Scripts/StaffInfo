@@ -22,14 +22,16 @@ const scheduler = Executors.newSingleThreadScheduledExecutor()
 
 if (!config.allTime) config.allTime = 0
 if (!config.isStaffInfoRainbow) config.isStaffInfoRainbow = false
-if (!config.isKeystrokesEnabled) config.isKeystrokesEnabled = true
+if (!config.isKeystrokesEnabled) config.isKeystrokesEnabled = false
 if (!config.isKeystrokesRainbow) config.isKeystrokesRainbow = false
 if (!config.isKeystrokesLeft) config.isKeystrokesLeft = false
-if (!config.isCoordsEnabled) config.isCoordsEnabled = true
+if (!config.isCoordsEnabled) config.isCoordsEnabled = false
 if (!config.isCoordsRainbow) config.isCoordsRainbow = false
 if (!config.isStaffInfoEnabled) config.isStaffInfoEnabled = true
 if (!config.isGuiEnabled) config.isGuiEnabled = true
 if (!config.isCoordsExtend) config.isCoordsExtend = false
+if (!config.isGuiPosition) config.isGuiPosition = false
+if (!config.isCoordsPosition) config.isCoordsPosition = false
 
 var isStaffInfoRainbow = config.isStaffInfoRainbow
 var isKeystrokesEnabled = config.isKeystrokesEnabled
@@ -40,6 +42,8 @@ var isCoordsRainbow = config.isCoordsRainbow
 var isStaffInfoEnabled = config.isStaffInfoEnabled
 var isGuiEnabled = config.isGuiEnabled
 var isCoordsExtend = config.isCoordsExtend
+var isGuiPosition = config.isGuiPosition
+var isCoordsPosition = config.isCoordsPosition
 
 var allTime = config.allTime
 var timestamp = 0
@@ -79,14 +83,21 @@ function buildBoard() {
     if (isStaffInfoEnabled) {
         let color = 0xCFCCC2
         if (isStaffInfoRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
-        if (isGuiEnabled) Draw.drawRect(width - 96, 0, width - 1, 55, 0xCC000000)
-
-        Draw.drawString('Весь онлайн', width - 92, 4, color)
-        Draw.drawString(allTimeFormatted, width - 86, 16, color)
-        Draw.drawString('Текущий онлайн', width - 92, 28, color)
-        Draw.drawString(currentTimeFormatted, width - 86, 40, color)
+        if (isGuiPosition) {
+            Draw.drawRect(96, 0, 1, 55, 0x4C000000)
+            Draw.drawString('Весь онлайн', 5, 4, color)
+            Draw.drawString(allTimeFormatted, 11, 16, color)
+            Draw.drawString('Текущий онлайн', 5, 28, color)
+            Draw.drawString(currentTimeFormatted, 11, 40, color)
+        } else {
+            Draw.drawRect(width - 96, 0, width - 1, 55, 0x4C000000)
+            Draw.drawString('Весь онлайн', width - 92, 4, color)
+            Draw.drawString(allTimeFormatted, width - 86, 16, color)
+            Draw.drawString('Текущий онлайн', width - 92, 28, color)
+            Draw.drawString(currentTimeFormatted, width - 86, 40, color)
+            }
+        }
     }
-}
 
 function buildKeystrokes() {
     if (isKeystrokesEnabled) {
@@ -99,7 +110,9 @@ function buildKeystrokes() {
         if (isKeystrokesRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
         if (isKeystrokesLeft) {
             Draw.drawRect(50, 85, 30, 105, 0xCC000000)
-            Draw.drawString('S', 38, 92, Keyboard.isKeyDown(31) ? pressColor : color)
+            Draw.drawString('S', 38, 92,
+
+                Keyboard.isKeyDown(31) ? pressColor : color)
 
             Draw.drawRect(50, 60, 30, 80, 0xCC000000)
             Draw.drawString('W', 38, 67, Keyboard.isKeyDown(17) ? pressColor : color)
@@ -146,9 +159,14 @@ function buildKeystrokes() {
 function BIGKINGSmallDick() {
     if (isCoordsEnabled) {
         var color = 0xfae1a7
+        const res = Draw.getResolution()
+        const width = res.getScaledWidth()
         if (isCoordsRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
-        if (isCoordsExtend) Draw.drawString("Yaw: " + Math.floor(Player.getYaw()), 4, 40, color) + Draw.drawString("Pitch: " + Math.floor(Player.getPitch()), 4, 52, color)
-        Draw.drawString("x: " + Math.floor(Player.getPosX()), 4, 4, color) + Draw.drawString("Y: " + Math.floor(Player.getPosY()), 4, 16, color) + Draw.drawString("Z: " + Math.floor(Player.getPosZ()), 4, 28, color)
+        if (isCoordsPosition) {
+            Draw.drawString("x: " + Math.floor(Player.getPosX()), width - 60, 4, color) + Draw.drawString("Y: " + Math.floor(Player.getPosY()), width - 60, 16, color) + Draw.drawString("Z: " + Math.floor(Player.getPosZ()), width - 60, 28, color)
+        } else {
+            Draw.drawString("x: " + Math.floor(Player.getPosX()), 4, 4, color) + Draw.drawString("Y: " + Math.floor(Player.getPosY()), 4, 16, color) + Draw.drawString("Z: " + Math.floor(Player.getPosZ()), 4, 28, color)
+        }
     }
 }
 
@@ -197,6 +215,12 @@ Events.on(this, 'chat_send', function(event) {
                 Config.save(nickname, config)
                 break
             }
+            case 'position': {
+                event.cancelled = true
+                config.isGuiPosition = (isGuiPosition ^= true)
+                Config.save(nickname, config)
+                break
+            }
             default:
                 break
         }
@@ -242,9 +266,9 @@ Events.on(this, 'chat_send', function(event) {
                 Config.save(nickname, config)
                 break
             }
-            case 'extend': {
+            case 'position': {
                 event.cancelled = true
-                config.isCoordsExtend = (isCoordsExtend ^= true)
+                config.isCoordsPosition = (isCoordsPosition ^= true)
                 Config.save(nickname, config)
                 break
             }
