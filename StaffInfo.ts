@@ -32,6 +32,7 @@ if (!config.isGuiEnabled) config.isGuiEnabled = true
 if (!config.isCoordsExtend) config.isCoordsExtend = false
 if (!config.isGuiPosition) config.isGuiPosition = false
 if (!config.isCoordsPosition) config.isCoordsPosition = false
+if (!config.isDisplayEnabled) config.isDisplayEnabled = true
 
 var isStaffInfoRainbow = config.isStaffInfoRainbow
 var isKeystrokesEnabled = config.isKeystrokesEnabled
@@ -44,6 +45,7 @@ var isGuiEnabled = config.isGuiEnabled
 var isCoordsExtend = config.isCoordsExtend
 var isGuiPosition = config.isGuiPosition
 var isCoordsPosition = config.isCoordsPosition
+var isDisplayEnabled = config.isDisplayEnabled
 
 var allTime = config.allTime
 var timestamp = 0
@@ -57,8 +59,16 @@ scheduler.scheduleAtFixedRate(function() {
     Config.save(nickname, config)
 }, 0, 10, TimeUnit.SECONDS)
 
+function DisplayEnabled() {
+    if (isDisplayEnabled) {
+        Display.setTitle('「 Ник: ' + nickname + ' | FPS: ' + Draw.getFps() + ' | ' + UtilTime.now() + ' 」')
+    } else {
+        Display.setTitle('Cristalix')
+    }
+}
+
 Events.on(this, 'game_loop', function() {
-    Display.setTitle('「 Ник: ' + nickname + ' | FPS: ' + Draw.getFps() + ' | ' + UtilTime.now() + ' 」')
+   DisplayEnabled()
 })
 
 Events.on(this, 'server_connect', function() {
@@ -277,4 +287,17 @@ Events.on(this, 'chat_send', function(event) {
         }
         return
     }
+    if (args[0] == '/dis' || args[0] == '/display') {
+        switch (args[1]) {
+            case 'toggle': {
+                event.cancelled = true
+                config.isDisplayEnabled = (isDisplayEnabled ^= true)
+                Config.save(nickname, config)
+                break
+            }
+            default:
+                break
+        }
+        return
+}
 })
