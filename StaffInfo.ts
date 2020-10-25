@@ -68,7 +68,7 @@ function DisplayEnabled() {
 }
 
 Events.on(this, 'game_loop', function() {
-   DisplayEnabled()
+    DisplayEnabled()
 })
 
 Events.on(this, 'server_connect', function() {
@@ -95,19 +95,19 @@ function buildBoard() {
         if (isStaffInfoRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
         if (isGuiPosition) {
             Draw.drawRect(96, 0, 1, 55, 0x4C000000)
-            Draw.drawString('Весь онлайн', 5, 4, color)
-            Draw.drawString(allTimeFormatted, 11, 16, color)
-            Draw.drawString('Текущий онлайн', 5, 28, color)
-            Draw.drawString(currentTimeFormatted, 11, 40, color)
+            fontRenderer.drawStringWithShadow('Весь онлайн', 5, 4, color)
+            fontRenderer.drawStringWithShadow(allTimeFormatted, 11, 16, color)
+            fontRenderer.drawStringWithShadow('Текущий онлайн', 5, 28, color)
+            fontRenderer.drawStringWithShadow(currentTimeFormatted, 11, 40, color)
         } else {
             Draw.drawRect(width - 96, 0, width - 1, 55, 0x4C000000)
-            Draw.drawString('Весь онлайн', width - 92, 4, color)
-            Draw.drawString(allTimeFormatted, width - 86, 16, color)
-            Draw.drawString('Текущий онлайн', width - 92, 28, color)
-            Draw.drawString(currentTimeFormatted, width - 86, 40, color)
-            }
+            fontRenderer.drawStringWithShadow('Весь онлайн', width - 92, 4, color)
+            fontRenderer.drawStringWithShadow(allTimeFormatted, width - 86, 16, color)
+            fontRenderer.drawStringWithShadow('Текущий онлайн', width - 92, 28, color)
+            fontRenderer.drawStringWithShadow(currentTimeFormatted, width - 86, 40, color)
         }
     }
+}
 
 function buildKeystrokes() {
     if (isKeystrokesEnabled) {
@@ -115,53 +115,52 @@ function buildKeystrokes() {
         const width = res.getScaledWidth()
         const height = res.getScaledHeight()
 
-        let color = 0xCFCCC2
-        let pressColor = 0x606C6E
-        if (isKeystrokesRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
+        let color = 0xCC000000
+	    let colorr = 0x808080
+        let colorrr = 0xCC808080
+        let pressColor = 0xCCffffff
+        if (isKeystrokesRainbow) colorr = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1), colorrr = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
         if (isKeystrokesLeft) {
-            Draw.drawRect(50, 85, 30, 105, 0xCC000000)
-            Draw.drawString('S', 38, 92,
+            Draw.drawRect(50, 85, 30, 105, Keyboard.isKeyDown(31) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('S', 38, 92, colorr)
 
-                Keyboard.isKeyDown(31) ? pressColor : color)
+            Draw.drawRect(50, 60, 30, 80, Keyboard.isKeyDown(17) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('W', 38, 67, colorr)
 
-            Draw.drawRect(50, 60, 30, 80, 0xCC000000)
-            Draw.drawString('W', 38, 67, Keyboard.isKeyDown(17) ? pressColor : color)
+            Draw.drawRect(75, 85, 55, 105, Keyboard.isKeyDown(32) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('A', 63, 92, colorr)
 
-            Draw.drawRect(75, 85, 55, 105, 0xCC000000)
-            Draw.drawString('A', 63, 92, Keyboard.isKeyDown(32) ? pressColor : color)
+            Draw.drawRect(25, 85, 5, 105, Keyboard.isKeyDown(30) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('D', 13, 92, colorr)
 
-            Draw.drawRect(25, 85, 5, 105, 0xCC000000)
-            Draw.drawString('D', 13, 92, Keyboard.isKeyDown(30) ? pressColor : color)
+            Draw.drawRect(75, 110, 5, 130, Keyboard.isKeyDown(57) ? pressColor : color)
+            Draw.drawRect(60, 119, 20, 121, colorrr)
 
-            Draw.drawRect(75, 110, 5, 130, 0xCC000000)
-            Draw.drawString('SPACE', 26, 117, Keyboard.isKeyDown(57) ? pressColor : color)
+            Draw.drawRect(37, 135, 5, 155, Mouse.isButtonDown(0) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('LMB', 13, 142, colorr)
 
-            Draw.drawRect(37, 135, 5, 155, 0xCC000000)
-            Draw.drawString('LMB', 13, 142, Mouse.isButtonDown(0) ? pressColor : color)
-
-            Draw.drawRect(75, 135, 42, 155, 0xCC000000)
-            Draw.drawString('RMB', 50, 142, Mouse.isButtonDown(1) ? pressColor : color)
+            Draw.drawRect(75, 135, 42, 155, Mouse.isButtonDown(1) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('RMB', 50, 142, colorr)
         } else {
-            Draw.drawRect(width - 50, height - 105, width - 30, height - 125, 0xCC000000)
-            Draw.drawString('W', width - 43, height - 118, Keyboard.isKeyDown(17) ? pressColor : color)
+            Draw.drawRect(width - 50, height - 105, width - 30, height - 125, Keyboard.isKeyDown(17) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('W', width - 43, height - 118, colorr)
 
-            Draw.drawRect(width - 50, height - 80, width - 30, height - 100, 0xCC000000)
-            Draw.drawString('S', width - 43, height - 93, Keyboard.isKeyDown(31) ? pressColor : color)
+            Draw.drawRect(width - 50, height - 80, width - 30, height - 100, Keyboard.isKeyDown(31) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('S', width - 43, height - 93, colorr)
 
-            Draw.drawRect(width - 75, height - 80, width - 55, height - 100, 0xCC000000)
-            Draw.drawString('A', width - 68, height - 93, Keyboard.isKeyDown(30) ? pressColor : color)
+            Draw.drawRect(width - 75, height - 80, width - 55, height - 100, Keyboard.isKeyDown(30) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('A', width - 68, height - 93, colorr)
+            Draw.drawRect(width - 25, height - 80, width - 5, height - 100, Keyboard.isKeyDown(32) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('D', width - 18, height - 93, colorr)
 
-            Draw.drawRect(width - 25, height - 80, width - 5, height - 100, 0xCC000000)
-            Draw.drawString('D', width - 18, height - 93, Keyboard.isKeyDown(32) ? pressColor : color)
+            Draw.drawRect(width - 75, height - 55, width - 5, height - 75, Keyboard.isKeyDown(57) ? pressColor : color)
+            Draw.drawRect(width - 60, height - 64, width - 20, height - 66, colorrr)
 
-            Draw.drawRect(width - 75, height - 55, width - 5, height - 75, 0xCC000000)
-            Draw.drawString('SPACE', width - 54, height - 69, Keyboard.isKeyDown(57) ? pressColor : color)
+            Draw.drawRect(width - 37, height - 30, width - 5, height - 52, Mouse.isButtonDown(1) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('RMB',width - 30, height - 45, colorr)
 
-            Draw.drawRect(width - 37, height - 30, width - 5, height - 52, 0xCC000000)
-            Draw.drawString('RMB',width - 30, height - 45, Mouse.isButtonDown(1) ? pressColor : color)
-
-            Draw.drawRect(width - 75, height - 30, width - 42, height - 52, 0xCC000000)
-            Draw.drawString('LMB', width - 68, height - 45, Mouse.isButtonDown(0) ? pressColor : color)
+            Draw.drawRect(width - 75, height - 30, width - 42, height - 52, Mouse.isButtonDown(0) ? pressColor : color)
+            fontRenderer.drawStringWithShadow('LMB', width - 68, height - 45, colorr)
         }
     }
 }
@@ -173,9 +172,9 @@ function BIGKINGSmallDick() {
         const width = res.getScaledWidth()
         if (isCoordsRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
         if (isCoordsPosition) {
-            Draw.drawString("x: " + Math.floor(Player.getPosX()), width - 60, 4, color) + Draw.drawString("Y: " + Math.floor(Player.getPosY()), width - 60, 16, color) + Draw.drawString("Z: " + Math.floor(Player.getPosZ()), width - 60, 28, color)
+            fontRenderer.drawStringWithShadow("x: " + Math.floor(Player.getPosX()), width - 60, 4, color) + fontRenderer.drawStringWithShadow("Y: " + Math.floor(Player.getPosY()), width - 60, 16, color) + fontRenderer.drawStringWithShadow("Z: " + Math.floor(Player.getPosZ()), width - 60, 28, color)
         } else {
-            Draw.drawString("x: " + Math.floor(Player.getPosX()), 4, 4, color) + Draw.drawString("Y: " + Math.floor(Player.getPosY()), 4, 16, color) + Draw.drawString("Z: " + Math.floor(Player.getPosZ()), 4, 28, color)
+            fontRenderer.drawStringWithShadow("x: " + Math.floor(Player.getPosX()), 4, 4, color) + fontRenderer.drawStringWithShadow("Y: " + Math.floor(Player.getPosY()), 4, 16, color) + fontRenderer.drawStringWithShadow("Z: " + Math.floor(Player.getPosZ()), 4, 28, color)
         }
     }
 }
@@ -299,5 +298,5 @@ Events.on(this, 'chat_send', function(event) {
                 break
         }
         return
-}
+    }
 })
