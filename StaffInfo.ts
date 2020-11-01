@@ -33,6 +33,12 @@ if (!config.isCoordsExtend) config.isCoordsExtend = false
 if (!config.isGuiPosition) config.isGuiPosition = false
 if (!config.isCoordsPosition) config.isCoordsPosition = false
 if (!config.isDisplayEnabled) config.isDisplayEnabled = true
+if (!config.isPlayerPingEnabled) config.isPlayerPingEnabled = false
+if (!config.isPlayerPingRainbow) config.isPlayerPingRainbow = false
+if (!config.isAimDetected) config.isAimDetected = false
+if (!config.isAimRainbow) config.isAimRainbow = false
+if (!config.isCPSDrawEnabled) config.isCPSDrawEnabled = false
+if (!config.isCPSDRawRainbow) config.isCPSDRawRainbow
 
 var isStaffInfoRainbow = config.isStaffInfoRainbow
 var isKeystrokesEnabled = config.isKeystrokesEnabled
@@ -46,10 +52,17 @@ var isCoordsExtend = config.isCoordsExtend
 var isGuiPosition = config.isGuiPosition
 var isCoordsPosition = config.isCoordsPosition
 var isDisplayEnabled = config.isDisplayEnabled
+var isPlayerPingEnabled = config.isPlayerPingEnabled
+var isPlayerPingRainbow = config.isPlayerPingRainbow
+var isAimDetected = config.isAimDetected
+var isAimRainbow = config.isAimRainbow
+var isCPSDrawEnabled = config.isCPSDrawEnabled
+var isCPSDrawRainbow = config.isCPSDRawRainbow
 
 var allTime = config.allTime
 var timestamp = 0
 var currentTime = 0
+var clicks = 0
 
 scheduler.scheduleAtFixedRate(function() {
     if (timestamp == 0) return
@@ -76,6 +89,15 @@ Events.on(this, 'server_connect', function() {
     timestamp = System.currentTimeMillis()
 })
 
+Events.on(this, 'key_press', function (e) {
+    stdout.println(e.key)
+    if (e.key == 0) clicks++
+})
+
+scheduler.scheduleAtFixedRate(function() {
+    clicks = 0
+}, 0, 1, TimeUnit.SECONDS)
+
 function buildBoard() {
     if (timestamp == 0) return
 
@@ -94,18 +116,26 @@ function buildBoard() {
         let color = 0xCFCCC2
         if (isStaffInfoRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
         if (isGuiPosition) {
-            Draw.drawRect(96, 0, 1, 55, 0x4C000000)
-            fontRenderer.drawStringWithShadow('Весь онлайн', 5, 4, color)
-            fontRenderer.drawStringWithShadow(allTimeFormatted, 11, 16, color)
-            fontRenderer.drawStringWithShadow('Текущий онлайн', 5, 28, color)
-            fontRenderer.drawStringWithShadow(currentTimeFormatted, 11, 40, color)
+            Draw.drawRect(96, 0, 1, 75, 0x4C000000)
+            fontRenderer.drawStringWithShadow('Весь онлайн', 5, 14, color)
+            fontRenderer.drawStringWithShadow(allTimeFormatted, 11, 26, color)
+            fontRenderer.drawStringWithShadow('Текущий онлайн', 5, 38, color)
+            fontRenderer.drawStringWithShadow(currentTimeFormatted, 11, 50, color)
         } else {
-            Draw.drawRect(width - 96, 0, width - 1, 55, 0x4C000000)
+            Draw.drawRect(width - 96, 0, width - 1, 75, 0x4C000000)
             fontRenderer.drawStringWithShadow('Весь онлайн', width - 92, 4, color)
             fontRenderer.drawStringWithShadow(allTimeFormatted, width - 86, 16, color)
             fontRenderer.drawStringWithShadow('Текущий онлайн', width - 92, 28, color)
             fontRenderer.drawStringWithShadow(currentTimeFormatted, width - 86, 40, color)
         }
+    }
+}
+
+function DrawCPS() {
+    if (isCPSDrawEnabled) {
+        let color = 0xffffff
+        if (isCPSDrawRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
+        fontRenderer.drawStringWithShadow(clicks, 10, 10, color)
     }
 }
 
@@ -116,7 +146,7 @@ function buildKeystrokes() {
         const height = res.getScaledHeight()
 
         let color = 0xCC000000
-	    let colorr = 0x808080
+        let colorr = 0x808080
         let colorrr = 0xCC808080
         let pressColor = 0xCCffffff
         if (isKeystrokesRainbow) colorr = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1), colorrr = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
@@ -165,6 +195,16 @@ function buildKeystrokes() {
     }
 }
 
+function PlayerPing() {
+    if (isPlayerPingEnabled) {
+        var name = Player.getName()
+        var color = 0x8273f0
+        if (isPlayerPingRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
+        fontRenderer.drawStringWithShadow(connection.getPlayerInfo(name).getResponseTime(), 4, 4, color)
+    }
+
+}
+
 function BIGKINGSmallDick() {
     if (isCoordsEnabled) {
         var color = 0xfae1a7
@@ -179,10 +219,28 @@ function BIGKINGSmallDick() {
     }
 }
 
+function DetectAim() {
+    if (isAimDetected) {
+        let resolution = Draw.getResolution();
+        let x = resolution.getScaledWidth() / 2;
+        let y = resolution.getScaledHeight() / 2;
+        let color = 0x03fc90
+        if (isAimRainbow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
+        Draw.drawHorizontalLine(2 + x, 4 + x, y, color)
+        Draw.drawVerticalLine(x, 2 + y, 5 + y, color)
+        Draw.drawHorizontalLine(-2 + x, -4 + x, y, color)
+        Draw.drawVerticalLine(x, -2 + y, -5 + y, color)
+
+    }
+}
+
 Events.on(this, 'gui_overlay_render', function() {
     buildBoard()
     buildKeystrokes()
     BIGKINGSmallDick()
+    PlayerPing()
+    DetectAim()
+    DrawCPS()
 })
 
 Events.on(this, 'chat_send', function(event) {
@@ -291,6 +349,64 @@ Events.on(this, 'chat_send', function(event) {
             case 'toggle': {
                 event.cancelled = true
                 config.isDisplayEnabled = (isDisplayEnabled ^= true)
+                Config.save(nickname, config)
+                break
+            }
+            default:
+                break
+        }
+        return
+    }
+
+    if (args[0] == '/ping' || args[0] == '/playerping') {
+        switch (args[1]) {
+            case 'toggle': {
+                event.cancelled = true
+                config.isPlayerPingEnabled = (isPlayerPingEnabled ^= true)
+                Config.save(nickname, config)
+                break
+            }
+            case 'rainbow': {
+                event.cancelled = true
+                config.isPlayerPingRainbow = (isPlayerPingRainbow ^= true)
+                Config.save(nickname, config)
+                break
+            }
+            default:
+                break
+        }
+        return
+    }
+    if (args[0] == '/hb' || args[0] == '/hitbox') {
+        switch (args[1]) {
+            case 'toggle': {
+                event.cancelled = true
+                config.isAimDetected = (isAimDetected ^= true)
+                Config.save(nickname, config)
+                break
+            }
+            case 'rainbow': {
+                event.cancelled = true
+                config.isAimRainbow = (isAimRainbow ^= true)
+                Config.save(nickname, config)
+                break
+            }
+            default:
+                break
+        }
+        return
+    }
+    if (args[0] == '/cps' || args[0] == '/clicks') {
+        switch (args[1]) {
+            case 'toggle': {
+                event.cancelled = true
+                config.isCPSDrawEnabled = (isCPSDrawEnabled ^= true)
+                Config.save(nickname, config)
+                break
+            }
+            case 'rainbow': {
+                event.cancelled = true
+                config.isCPSDrawRainbow = (isCPSDrawRainbow ^= true)
                 Config.save(nickname, config)
                 break
             }
