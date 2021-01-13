@@ -49,10 +49,30 @@ if (!config.isCoordsRainbow) config.isCoordsRainbow = false
 var isCoordsEnabled = config.isCoordsEnabled
 var isCoordsExtended = config.isCoordsExtended
 var isCoordsRainbow = config.isCoordsRainbow
+if (!config.coordsX) config.coordsX = 4
+if (!config.coordsY) config.coordsY = 4
+var coordsX = config.coordsX
+var coordsY = config.coordsY
 
 if (!config.isTitleEnabled) config.isTitleEnabled = true
 var isTitleEnabled = config.isTitleEnabled
 var title = '「 Ник: %name% | FPS: %fps% | %time% 」'
+
+var isVersionDiff = false
+var newVersion = ''
+
+function checkVersion() {
+  var checker = Http.connect('https://raw.githubusercontent.com/Cristalix-Scripts/scripts/master/.version')
+  var is = checker.getContent()
+  var ch = 0
+  while((ch = is.read()) != -1) newVersion += String.fromCharCode(ch)
+  newVersion = newVersion.replaceAll('\n', '')
+  if (version != newVersion) {
+    isVersionDiff = true
+	sendTitle('§6CristalixHelper: §aвышла новая версия!')
+	sendMessage('§aВышла новая версия! §aОбновитесь - §6/helper')
+  }
+}
 
 function sendMessage(message) {
   ingameGUI.printChatMessage(prefix + message)
@@ -104,6 +124,7 @@ Events.on(this, 'mouse_press', function (e) {
 Events.on(this, 'server_connect', function() {
   currentTime = 0
   timestamp = System.currentTimeMillis()
+  checkVersion()
 })
 
 Events.on(this, 'game_loop', function() { updateDisplay() })
@@ -182,8 +203,6 @@ function drawKeystrokes() {
 
 function drawCoords() {
   if (!isCoordsEnabled) return
-  const res = Draw.getResolution()
-  const width = res.getScaledWidth()
   const x = Math.floor(Player.getPosX())
   const y = Math.floor(Player.getPosY())
   const z = Math.floor(Player.getPosZ())
@@ -197,10 +216,10 @@ function drawCoords() {
 		overRender = x * 8 + ' ? ' + z * 8
 		netherRender = x + ' ' + y + ' ' + z
 	  }
-	  fontRenderer.drawStringWithShadow(overRender + ' | ' + netherRender, 4, 4, color)
+	  fontRenderer.drawStringWithShadow(overRender + ' | ' + netherRender, coordsX, coordsY, color)
 	  return
   }
-  fontRenderer.drawStringWithShadow(overRender, 4, 4, color)
+  fontRenderer.drawStringWithShadow(overRender, coordsX, coordsY, color)
 }
 
 Events.on(this, 'gui_overlay_render', function() {
@@ -209,6 +228,10 @@ Events.on(this, 'gui_overlay_render', function() {
   drawCoords()
 })
 
+function isInt(input){
+   return ((input - 0) == input && input % 1 == 0)
+}
+
 Events.on(this, 'chat_send', function(e) {
   if (!e.command) return
   const args = e.message.split(' ')
@@ -216,16 +239,16 @@ Events.on(this, 'chat_send', function(e) {
     e.cancelled = true
 	sendTitle('§6CristalixHelper §a' + version)
 	sendMessage(
-	'§aСписок команд и возможностей:\n' +
-	'  §6/online или /onl §8- §fсчётчик онлайна\n' +
-	'  §6/keystrokes или /ks §8- §fKeystrokes (отображение нажатых клавиш)\n' +
-	'  §6/coordinates или /coords §8- §fкоординаты\n' +
-    '  §6/title §8- §fуправление названием окна игры\n\n' +
-	'§aРепозиторий для обновлений: §6https://github.com/Cristalix-Scripts/scripts\n' +
-	'§aВерсия: §6' + version + '\n' +
-	'§aАвторы:\n' +
-	'  §6• Narts1ss §8| §6https://vk.com/nartsisss §8| §6https://github.com/Nartsissov\n' +
-    '  §6• xpepelok §8| §6https://vk.com/xpepelok §8| §6https://github.com/xpepelok\n'
+	  '§aСписок команд и возможностей:\n' +
+	  '  §6/online или /onl §8- §fсчётчик онлайна\n' +
+	  '  §6/keystrokes или /ks §8- §fKeystrokes (отображение нажатых клавиш)\n' +
+	  '  §6/coordinates или /coords §8- §fкоординаты\n' +
+      '  §6/title §8- §fуправление названием окна игры\n\n' +
+	  '§aВерсия: §6' + version + (isVersionDiff ? ' §8| §aОбновитесь до §6' + newVersion : '') + '\n' +
+	  '§aРепозиторий для обновлений: §6https://github.com/Cristalix-Scripts/scripts\n' +
+	  '§aАвторы:\n' +
+	  '  §6• Narts1ss §8| §6https://vk.com/nartsisss §8| §6https://github.com/Nartsissov\n' +
+      '  §6• xpepelok §8| §6https://vk.com/xpepelok §8| §6https://github.com/xpepelok\n'
 	)
 	return
   }
@@ -328,12 +351,38 @@ Events.on(this, 'chat_send', function(e) {
 		sendTitle('§fКоординаты ада: ' + (isCoordsExtended ? '§aвкл' : '§cвыкл') + '.')
         break
       }
+      case 'x': {
+		const x = args[2]
+		if (x == null || !isInt(x)) {
+		  	sendMessage('§cКоордината X §cне может §cбыть такой! §cДля возвращения §cстандартного значения укажите §64.')
+			return
+		}
+		coordsX = parseInt(x, 10)
+        config.coordsX = coordsX
+        saveConfig()
+		sendTitle('§fПоложение координат §aизменено.')
+        break
+      }
+      case 'y': {
+		const y = args[2]
+		if (y == null || !isInt(y)) {
+		  	sendMessage('§cКоордината Y §cне может §cбыть такой! §cДля возвращения §cстандартного значения укажите §64.')
+			return
+		}
+		coordsY = parseInt(y, 10)
+        config.coordsY = coordsY
+        saveConfig()
+		sendTitle('§fПоложение координат §aизменено.')
+        break
+      }
       case 'help':
       default: {
 		sendHelp('coordinates',
           ' §6help §8- §fпомощь по команде\n' +
           ' §6toggle §8- §fвключение/отключение отображения координат\n' +
-		  ' §6extend §8- §fвключение/отключение расчёта координат ада'
+		  ' §6extend §8- §fвключение/отключение расчёта координат ада\n' +
+		  ' §6x §8- §fзадать координату §6X §fдля отрисовки\n' +
+		  ' §6y §8- §fзадать координату §6Y §fдля отрисовки'
         )
         break
       }
