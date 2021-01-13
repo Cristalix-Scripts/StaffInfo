@@ -62,7 +62,7 @@ function sendHelp(command, usage) {
   ingameGUI.printChatMessage('\n' + prefix + '§aПомощь по команде §6\'' + command + '\':\n' + usage + '\n')
 }
 
-function sendTitle(title) { ingameGUI.displayTitle(title, ' ', 10, 40, 20)}
+function sendTitle(title) { ingameGUI.displayTitle(title, ' ', 10, 30, 20)}
 
 function checkTitle() {
   if (config.customTitle) {
@@ -124,10 +124,10 @@ function drawOnlineBoard() {
   if (isOnlineBoardRaibow) color = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
   if (isOnlineBoardLeft) {
     if (isOnlineBackgroundEnabled) Draw.drawRect(96, 0, 1, 57, 0x4C000000)
-      fontRenderer.drawStringWithShadow('Весь онлайн', 5, 14, color)
-      fontRenderer.drawStringWithShadow(allTimeFormatted, 11, 26, color)
-      fontRenderer.drawStringWithShadow('Текущий онлайн', 5, 38, color)
-      fontRenderer.drawStringWithShadow(currentTimeFormatted, 11, 50, color)
+      fontRenderer.drawStringWithShadow('Весь онлайн', 5, 4, color)
+      fontRenderer.drawStringWithShadow(allTimeFormatted, 11, 16, color)
+      fontRenderer.drawStringWithShadow('Текущий онлайн', 5, 28, color)
+      fontRenderer.drawStringWithShadow(currentTimeFormatted, 11, 40, color)
       return
   }
   if (isOnlineBackgroundEnabled) Draw.drawRect(width - 96, 0, width - 1, 57, 0x4C000000)
@@ -159,9 +159,9 @@ function drawKeystrokes() {
     Draw.drawRect(75, 110, 5, 130, Keyboard.isKeyDown(57) ? pressColor : color)
     Draw.drawRect(60, 119, 20, 121, colorrr)
     Draw.drawRect(37, 135, 5, 155, Mouse.isButtonDown(0) ? pressColor : color)
-    fontRenderer.drawStringWithShadow(leftClicks > 0 ? leftClicks : 'LMB', 13, 142, colorr)
+    fontRenderer.drawStringWithShadow(leftClicks > 0 ? '  ' + leftClicks : 'LMB', 13, 142, colorr)
     Draw.drawRect(75, 135, 42, 155, Mouse.isButtonDown(1) ? pressColor : color)
-    fontRenderer.drawStringWithShadow(rightClicks > 0 ? rightClicks : 'RMB', 50, 142, colorr)
+    fontRenderer.drawStringWithShadow(rightClicks > 0 ? '  ' + rightClicks : 'RMB', 50, 142, colorr)
     return
   }
   Draw.drawRect(width - 50, height - 105, width - 30, height - 125, Keyboard.isKeyDown(17) ? pressColor : color)
