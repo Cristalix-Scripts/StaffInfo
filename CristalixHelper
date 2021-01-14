@@ -15,7 +15,7 @@
                                                                                 
     https://github.com/Nartsissov | https://github.com/xpepelok
 */
-const version = '1.2.1'
+const version = '1.2.3'
 const nickname = Player.getName()
 const config = Config.load(nickname)
 const scheduler = Executors.newSingleThreadScheduledExecutor()
@@ -76,13 +76,11 @@ function checkVersion() {
     var char = String.fromCharCode(ch)
     newVersion = newVersion + char
   }
-  newVersion = newVersion.replaceAll('\n', '')
-  if (version != newVersion) {
-    isVersionDiff = true
-	sendTitle('§6CristalixHelper: §aвышла новая версия!')
-	sendMessage('§aВышла новая версия! §aОбновитесь - §6/helper')
-  }
+  newVersion = newVersion.replace('\n', '')
+  if (version != newVersion) isVersionDiff = true
 }
+
+checkVersion()
 
 function sendMessage(message) {
   ingameGUI.printChatMessage(prefix + message)
@@ -105,6 +103,8 @@ function checkTitle() {
   }
 }
 
+checkTitle()
+
 function saveConfig() { Config.save(nickname, config) }
 
 scheduler.scheduleAtFixedRate(function() {
@@ -120,7 +120,10 @@ scheduler.scheduleAtFixedRate(function() {
 
 function updateDisplay() {
     if (isTitleEnabled) {
-	  Display.setTitle(title.replace('%name%', nickname).replace('%fps%', Draw.getFps()).replace('%time%', UtilTime.now()))
+	  var a = title.replaceAll('%name%', nickname)
+	  a = a.replaceAll('%fps%', Draw.getFps())
+	  a = a.replaceAll('%time%', UtilTime.now())
+	  Display.setTitle(a)
     } else {
       Display.setTitle('Cristalix')
     }
@@ -134,7 +137,10 @@ Events.on(this, 'mouse_press', function (e) {
 Events.on(this, 'server_connect', function() {
   currentTime = 0
   timestamp = System.currentTimeMillis()
-  checkVersion()
+  if (isVersionDiff) {
+	sendTitle('§6CristalixHelper: §aвышла новая версия!')
+	sendMessage('§aВышла новая версия! §aОбновитесь - §6/helper')
+  }
 })
 
 Events.on(this, 'game_loop', function() { updateDisplay() })
