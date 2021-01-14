@@ -15,7 +15,7 @@
                                                                                 
     https://github.com/Nartsissov | https://github.com/xpepelok
 */
-const version = '1.1'
+const version = '1.2'
 const nickname = Player.getName()
 const config = Config.load(nickname)
 const scheduler = Executors.newSingleThreadScheduledExecutor()
@@ -57,6 +57,13 @@ var coordsY = config.coordsY
 if (!config.isTitleEnabled) config.isTitleEnabled = true
 var isTitleEnabled = config.isTitleEnabled
 var title = '「 Ник: %name% | FPS: %fps% | %time% 」'
+
+if (!config.isArmorEnabled) config.isArmorEnabled = false
+if (!config.armorX) config.armorX = 4
+if (!config.armorY) config.armorY = 10
+var isArmorEnabled = config.isArmorEnabled
+var armorX = config.armorX
+var armorY = config.armorY
 
 var isVersionDiff = false
 var newVersion = ''
@@ -222,16 +229,38 @@ function drawCoords() {
   fontRenderer.drawStringWithShadow(overRender, coordsX, coordsY, color)
 }
 
+function drawArmor() {
+  drawArmor0(3, armorX, armorY)
+  drawArmor0(2, armorX, armorY + 16)
+  drawArmor0(1, armorX, armorY + 32)
+  drawArmor0(0, armorX, armorY + 48)
+}
+
 Events.on(this, 'gui_overlay_render', function() {
   drawOnlineBoard()
   drawKeystrokes()
   drawCoords()
+  drawArmor()
 })
 
 function isInt(input){
    return ((input - 0) == input && input % 1 == 0)
 }
 
+function drawArmor0(slot, x, y) {
+  if (isArmorEnabled) {
+    let inv = minecraft.getPlayer().getInventory()
+    let item = inv.armorItemInSlot(slot)
+    let amount = item.getCount()
+    let damage = item.getItemDamage()
+    let maxDamage = item.getMaxDamage()
+
+    Draw.renderItemAndEffectIntoGUI(item, x, y + 5)
+    Draw.drawStringWithShadow((damage == maxDamage || damage == 0) ? '' : maxDamage - damage, x + 16, y + 9)
+    Draw.renderItemOverlayIntoGUI(item, x, y + 5, amount == 1 ? '' : amount)
+  }
+}
+	
 Events.on(this, 'chat_send', function(e) {
   if (!e.command) return
   const args = e.message.split(' ')
@@ -243,7 +272,8 @@ Events.on(this, 'chat_send', function(e) {
 	  '  §6/online или /onl §8- §fсчётчик онлайна\n' +
 	  '  §6/keystrokes или /ks §8- §fKeystrokes (отображение нажатых клавиш)\n' +
 	  '  §6/coordinates или /coords §8- §fкоординаты\n' +
-      '  §6/title §8- §fуправление названием окна игры\n\n' +
+      '  §6/title §8- §fуправление названием окна игры\n' +
+	  '  §6/armor §8- §fотображение прочности брони\n\n' +
 	  '§aВерсия: §6' + version + (isVersionDiff ? ' §8| §aОбновитесь до §6' + newVersion : '') + '\n' +
 	  '§aРепозиторий для обновлений: §6https://github.com/Cristalix-Scripts/scripts\n' +
 	  '§aАвторы:\n' +
@@ -259,7 +289,7 @@ Events.on(this, 'chat_send', function(e) {
         config.isOnlineBoardEnabled = (isOnlineBoardEnabled ^= true)
         saveConfig()
 		sendTitle('§fТабличка онлайна: ' + (isOnlineBoardEnabled ? '§aвкл' : '§cвыкл') + '.')
-        break
+        return
       }
       case 'reset': {
         currentTime = 0
@@ -268,25 +298,25 @@ Events.on(this, 'chat_send', function(e) {
         config.allTime = 0
         saveConfig()
 		sendTitle('§fОнлайн за месяц §cсброшен.')
-        break
+        return
       }
       case 'rainbow': {
         config.isOnlineBoardRaibow = (isOnlineBoardRaibow ^= true)
         saveConfig()
 		sendTitle('§fЦвет текста таблички: ' + (isOnlineBoardRaibow ? '§cр§6а§eд§2у§bж§1н§5ы§dй' : '§aобычный') + '.')
-        break
+        return
       }
       case 'background': {
         config.isOnlineBackgroundEnabled = (isOnlineBackgroundEnabled ^= true)
         saveConfig()
 		sendTitle('§fФон таблички: ' + (isOnlineBackgroundEnabled ? '§aвкл' : '§cвыкл') + '.')
-        break
+        return
       }
       case 'position': {
         config.isOnlineBoardLeft = (isOnlineBoardLeft ^= true)
         saveConfig()
 		sendTitle('§fПозиция таблички: ' + (isOnlineBoardLeft ? '§aслева' : '§aсправа') + '.')
-        break
+        return
       }
       case 'help':
       default: {
@@ -297,7 +327,7 @@ Events.on(this, 'chat_send', function(e) {
           ' §6rainbow §8- §fвключение/отключение радужного текста\n' +
           ' §6position §8- §fсмена позиции таблички онлайна'
         )
-        break
+        return
       }
     }
     return
@@ -309,19 +339,19 @@ Events.on(this, 'chat_send', function(e) {
         config.isKeystrokesEnabled = (isKeystrokesEnabled ^= true)
         saveConfig()
 		sendTitle('§fKeystrokes: ' + (isKeystrokesEnabled ? '§aвкл' : '§cвыкл') + '.')
-        break
+        return
       }
       case 'rainbow': {
         config.isKeystrokesRainbow = (isKeystrokesRainbow ^= true)
         saveConfig()
 		sendTitle('§fЦвет Keystrokes: ' + (isKeystrokesRainbow ? '§cр§6а§eд§2у§bж§1н§5ы§dй' : '§aобычный') + '.')
-        break
+        return
       }
       case 'position': {
         config.isKeystrokesLeft = (isKeystrokesLeft ^= true)
         saveConfig()
 		sendTitle('§fПозиция Keystrokes: ' + (isKeystrokesLeft ? '§aслева сверху' : '§aсправа снизу') + '.')
-        break
+        return
       }
       case 'help':
       default: {
@@ -331,7 +361,7 @@ Events.on(this, 'chat_send', function(e) {
           ' §6rainbow §8- §fвключение/отключение радужного цвета\n' +
           ' §6position §8- §fсмена позиции Keystrokes'
         )
-        break
+        return
       }
     }
     return
@@ -343,13 +373,13 @@ Events.on(this, 'chat_send', function(e) {
         config.isCoordsEnabled = (isCoordsEnabled ^= true)
         saveConfig()
 		sendTitle('§fКоординаты: ' + (isCoordsEnabled ? '§aвкл' : '§cвыкл') + '.')
-        break
+        return
       }
       case 'extend': {
         config.isCoordsExtended = (isCoordsExtended ^= true)
         saveConfig()
 		sendTitle('§fКоординаты ада: ' + (isCoordsExtended ? '§aвкл' : '§cвыкл') + '.')
-        break
+        return
       }
       case 'x': {
 		const x = args[2]
@@ -361,7 +391,7 @@ Events.on(this, 'chat_send', function(e) {
         config.coordsX = coordsX
         saveConfig()
 		sendTitle('§fПоложение координат §aизменено.')
-        break
+        return
       }
       case 'y': {
 		const y = args[2]
@@ -373,7 +403,7 @@ Events.on(this, 'chat_send', function(e) {
         config.coordsY = coordsY
         saveConfig()
 		sendTitle('§fПоложение координат §aизменено.')
-        break
+        return
       }
       case 'help':
       default: {
@@ -384,7 +414,7 @@ Events.on(this, 'chat_send', function(e) {
 		  ' §6x §8- §fзадать координату §6X §fдля отрисовки\n' +
 		  ' §6y §8- §fзадать координату §6Y §fдля отрисовки'
         )
-        break
+        return
       }
     }
     return
@@ -420,6 +450,46 @@ Events.on(this, 'chat_send', function(e) {
 	  '   §6%time% §8- §fтекущее время\n' +
 	  '   §6%fps% §8- §fтекущий FPS\n' +
 	  ' §6set null §8- §fвернуть стандартное название'
+    )
+	return
+  }
+  if (args[0] == '/armor' || args[0] == '/arm') {
+    e.cancelled = true
+	if (args[1] == 'toggle') {
+	  config.isArmorEnabled = (isArmorEnabled ^= true)
+      saveConfig()
+	  sendTitle('§fПрочность брони: ' + (isArmorEnabled ? '§aвкл' : '§cвыкл'))
+      return
+	}
+	if (args[1] == 'x') {
+	  const x = args[2]
+	  if (x == null || !isInt(x)) {
+		sendMessage('§cКоордината X §cне может §cбыть такой! §cДля возвращения §cстандартного значения укажите §64.')
+	    return
+	  }
+	  armorX = parseInt(x, 10)
+      config.armorX = armorX
+      saveConfig()
+      sendTitle('§fПоложение брони §aизменено.')
+      return
+    }
+	if (args[1] == 'y') {
+	  const y = args[2]
+	  if (y == null || !isInt(y)) {
+		sendMessage('§cКоордината Y §cне может §cбыть такой! §cДля возвращения §cстандартного значения укажите §6100.')
+		return
+	  }
+	  armorY = parseInt(y, 10)
+      config.armorY = armorY
+      saveConfig()
+      sendTitle('§fПоложение брони §aизменено.')
+      return
+    }
+	sendHelp('armor',
+	  ' §6help §8- §fпомощь по команде\n' +
+      ' §6toggle §8- §fвключение/отключение показа прочности брони\n' +
+	  ' §6x §8- §fзадать координату §6X §fдля отрисовки\n' +
+	  ' §6y §8- §fзадать координату §6Y §fдля отрисовки'
     )
 	return
   }
