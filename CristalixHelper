@@ -15,7 +15,7 @@
                                                                                 
     https://github.com/Nartsissov | https://github.com/xpepelok
 */
-const version = '1.2.3'
+const version = '1.2.4'
 const nickname = Player.getName()
 const config = Config.load(nickname)
 const scheduler = Executors.newSingleThreadScheduledExecutor()
@@ -37,9 +37,13 @@ var isOnlineBoardRaibow = config.isOnlineBoardRaibow
 if (!config.isKeystrokesEnabled) config.isKeystrokesEnabled = false
 if (!config.isKeystrokesLeft) config.isKeystrokesLeft = false
 if (!config.isKeystrokesRainbow) config.isKeystrokesRainbow = false
+if (!config.isSpaceEnabled) config.isSpaceEnabled = true
+if (!config.isMouseButtonsEnabled) config.isMouseButtonsEnabled = true
 var isKeystrokesEnabled = config.isKeystrokesEnabled
 var isKeystrokesLeft = config.isKeystrokesLeft
 var isKeystrokesRainbow = config.isKeystrokesRainbow
+var isSpaceEnabled = config.isSpaceEnabled
+var isMouseButtonsEnabled = config.isMouseButtonsEnabled
 var leftClicks = 0
 var rightClicks = 0
 
@@ -183,38 +187,55 @@ function drawKeystrokes() {
   let colorr = 0x808080
   let colorrr = 0xCC808080
   let pressColor = 0xCCffffff
+  let xLMB = width - 68
+  let yLMB = height - 73
+  let xRMB = width - 30
+  let yRMB = height - 73
+  let firstWidthLMB = width - 75
+  let firstHeightLMB = height - 60
+  let secondWidthLMB = width - 41
+  let secondHeightLMB = height - 78
+  let firstWidthRMB = width - 39
+  let firstHeightRMB = height - 60
+  let secondWidthRMB = width - 5
+  let secondHeightRMB = height - 78
+  let xLMBB = 13
+  let yLMBB = 112
+  let xRMBB = 50
+  let yRMBB = 112
+  let firstWidthLMBB = 39
+  let firstHeightLMBB = 107
+  let secondWidthLMBB = 5
+  let secondHeightLMBB = 124
+  let firstWidthRMBB = 75
+  let firstHeightRMBB = 107
+  let secondWidthRMBB = 41
+  let secondHeightRMBB = 124
+
   if (isKeystrokesRainbow) colorr = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1), colorrr = Colors.HSBtoRGB(Math.ceil(System.currentTimeMillis() / 20) % 360 / 360, 1, 1)
   if (isKeystrokesLeft) {
-    Draw.drawRect(50, 60, 30, 80, Keyboard.isKeyDown(17) ? pressColor : color)
-    Draw.drawRect(75, 85, 55, 105, Keyboard.isKeyDown(32) ? pressColor : color)
-	Draw.drawRect(75, 110, 5, 130, Keyboard.isKeyDown(57) ? pressColor : color)
-    Draw.drawRect(25, 85, 5, 105, Keyboard.isKeyDown(30) ? pressColor : color)
-	Draw.drawRect(50, 85, 30, 105, Keyboard.isKeyDown(31) ? pressColor : color)
-	Draw.drawRect(60, 119, 20, 121, colorrr)
-    Draw.drawRect(37, 135, 5, 155, Mouse.isButtonDown(0) ? pressColor : color)
-	Draw.drawRect(75, 135, 42, 155, Mouse.isButtonDown(1) ? pressColor : color)
-	fontRenderer.drawStringWithShadow('W', 38, 67, colorr)
-    fontRenderer.drawStringWithShadow('A', 13, 92, colorr)
+    if (isSpaceEnabled) Draw.drawRect(75, 107, 5, 125, Keyboard.isKeyDown(57) ? pressColor : color), Draw.drawRect(60, 115, 20, 117, colorrr), xLMBB = 13, yLMBB = 132, xRMBB = 50, yRMBB = 132, firstWidthLMBB = 39, firstHeightLMBB = 127, secondWidthLMBB = 5, secondHeightLMBB = 145, firstWidthRMBB = 75, firstHeightRMBB = 127, secondWidthRMBB = 41, secondHeightRMBB = 145
+    if (isMouseButtonsEnabled) Draw.drawRect(firstWidthLMBB, firstHeightLMBB, secondWidthLMBB, secondHeightLMBB, Mouse.isButtonDown(0) ? pressColor : color), Draw.drawRect(firstWidthRMBB, firstHeightRMBB, secondWidthRMBB, secondHeightRMBB, Mouse.isButtonDown(1) ? pressColor : color), fontRenderer.drawStringWithShadow(leftClicks > 0 ? '  ' + leftClicks : 'LMB', xLMBB, yLMBB, colorr), fontRenderer.drawStringWithShadow(rightClicks > 0 ? '  ' + rightClicks : 'RMB', xRMBB, yRMBB, colorr)
+    Draw.drawRect(52, 63, 28, 83, Keyboard.isKeyDown(17) ? pressColor : color)
+    Draw.drawRect(75, 85, 53, 105, Keyboard.isKeyDown(32) ? pressColor : color)
+	  Draw.drawRect(52, 85, 28, 105, Keyboard.isKeyDown(31) ? pressColor : color)
+    Draw.drawRect(27, 85, 5, 105, Keyboard.isKeyDown(30) ? pressColor : color)
+	fontRenderer.drawStringWithShadow('W', 38, 70, colorr)
+    fontRenderer.drawStringWithShadow('D', 13, 92, colorr)
     fontRenderer.drawStringWithShadow('S', 38, 92, colorr)
-    fontRenderer.drawStringWithShadow('D', 63, 92, colorr)
-    fontRenderer.drawStringWithShadow(leftClicks > 0 ? '  ' + leftClicks : 'LMB', 13, 142, colorr)
-    fontRenderer.drawStringWithShadow(rightClicks > 0 ? '  ' + rightClicks : 'RMB', 50, 142, colorr)
+    fontRenderer.drawStringWithShadow('A', 63, 92, colorr)
     return
   }
-  Draw.drawRect(width - 50, height - 105, width - 30, height - 125, Keyboard.isKeyDown(17) ? pressColor : color)
-  Draw.drawRect(width - 75, height - 80, width - 55, height - 100, Keyboard.isKeyDown(30) ? pressColor : color)
-  Draw.drawRect(width - 50, height - 80, width - 30, height - 100, Keyboard.isKeyDown(31) ? pressColor : color)
-  Draw.drawRect(width - 25, height - 80, width - 5, height - 100, Keyboard.isKeyDown(32) ? pressColor : color)
-  Draw.drawRect(width - 75, height - 55, width - 5, height - 75, Keyboard.isKeyDown(57) ? pressColor : color)
-  Draw.drawRect(width - 60, height - 64, width - 20, height - 66, colorrr)
-  Draw.drawRect(width - 75, height - 30, width - 42, height - 52, Mouse.isButtonDown(0) ? pressColor : color)
-  Draw.drawRect(width - 37, height - 30, width - 5, height - 52, Mouse.isButtonDown(1) ? pressColor : color)
-  fontRenderer.drawStringWithShadow('W', width - 43, height - 118, colorr)
-  fontRenderer.drawStringWithShadow('A', width - 68, height - 93, colorr)
+  if (isSpaceEnabled) Draw.drawRect(width - 75, height - 60, width - 5, height - 78, Keyboard.isKeyDown(57) ? pressColor : color), Draw.drawRect(width - 60, height - 68, width - 20, height - 70, colorrr), firstWidthLMB = width - 75, firstHeightLMB = height - 40, secondWidthLMB = width - 40, secondHeightLMB = height - 58, firstWidthRMB = width - 39, firstHeightRMB = height - 40, secondWidthRMB = width - 5, secondHeightRMB = height - 58, xLMB = width - 68, yLMB = height - 52, xRMB = width - 30, yRMB = height - 52
+  if (isMouseButtonsEnabled) Draw.drawRect(firstWidthLMB, firstHeightLMB, secondWidthLMB, secondHeightLMB, Mouse.isButtonDown(0) ? pressColor : color), Draw.drawRect(firstWidthRMB, firstHeightRMB, secondWidthRMB, secondHeightRMB, Mouse.isButtonDown(1) ? pressColor : color), fontRenderer.drawStringWithShadow(leftClicks > 0 ? '  ' + leftClicks : 'LMB', xLMB, yLMB, colorr), fontRenderer.drawStringWithShadow(rightClicks > 0 ? '  ' + rightClicks : 'RMB', xRMB, yRMB, colorr)
+  Draw.drawRect(width - 52, height - 102, width - 28, height - 122, Keyboard.isKeyDown(17) ? pressColor : color)
+  Draw.drawRect(width - 75, height - 80, width - 53, height - 100, Keyboard.isKeyDown(30) ? pressColor : color)
+  Draw.drawRect(width - 52, height - 80, width - 28, height - 100, Keyboard.isKeyDown(31) ? pressColor : color)
+  Draw.drawRect(width - 27, height - 80, width - 5, height - 100, Keyboard.isKeyDown(32) ? pressColor : color)
+  fontRenderer.drawStringWithShadow('W', width - 43, height - 115, colorr)
+  fontRenderer.drawStringWithShadow('A', width - 67, height - 93, colorr)
   fontRenderer.drawStringWithShadow('S', width - 43, height - 93, colorr)
   fontRenderer.drawStringWithShadow('D', width - 18, height - 93, colorr)
-  fontRenderer.drawStringWithShadow(leftClicks > 0 ? '  ' + leftClicks : 'LMB', width - 68, height - 45, colorr)
-  fontRenderer.drawStringWithShadow(rightClicks > 0 ? '  ' + rightClicks : 'RMB', width - 30, height - 45, colorr)
 }
 
 function drawCoords() {
@@ -239,10 +260,10 @@ function drawCoords() {
 }
 
 function drawArmor() {
-  drawArmor0(3, armorX, armorY)
-  drawArmor0(2, armorX, armorY + 16)
-  drawArmor0(1, armorX, armorY + 32)
-  drawArmor0(0, armorX, armorY + 48)
+  drawArmor0(39, armorX, armorY)
+  drawArmor0(38, armorX, armorY + 16)
+  drawArmor0(37, armorX, armorY + 32)
+  drawArmor0(36, armorX, armorY + 48)
 }
 
 Events.on(this, 'gui_overlay_render', function() {
@@ -256,18 +277,18 @@ function isInt(input){
    return ((input - 0) == input && input % 1 == 0)
 }
 
-function drawArmor0(slot, x, y) {
-  if (isArmorEnabled) {
-    let inv = minecraft.getPlayer().getInventory()
-    let item = inv.armorItemInSlot(slot)
-    let amount = item.getCount()
-    let damage = item.getItemDamage()
-    let maxDamage = item.getMaxDamage()
-
-    Draw.renderItemAndEffectIntoGUI(item, x, y + 5)
-    Draw.drawStringWithShadow((damage == maxDamage || damage == 0) ? '' : maxDamage - damage, x + 16, y + 9)
-    Draw.renderItemOverlayIntoGUI(item, x, y + 5, amount == 1 ? '' : amount)
-  }
+function drawArmor(slot, x, y) {
+    if (isArmorEnabled) {
+    RenderHelper.enableGUIStandardItemLighting();
+        let item = Inventory.getStackInSlot(slot)
+        let amount = Inventory.getCount(slot)
+        let damage = Inventory.getDurability(slot)
+        var maxDamage = Inventory.getMaxDamage(slot)
+        
+        Draw.renderItemAndEffectIntoGUI(item, x + 6, y + 5)
+        Draw.drawStringWithShadow(damage == maxDamage ? "" : damage, x + 22, y + 11)
+        Draw.renderItemOverlayIntoGUI(item, x + 6, y + 5, amount == 1 ? "" : amount)
+    }
 }
 	
 Events.on(this, 'chat_send', function(e) {
@@ -362,12 +383,26 @@ Events.on(this, 'chat_send', function(e) {
 		sendTitle('§fПозиция Keystrokes: ' + (isKeystrokesLeft ? '§aслева сверху' : '§aсправа снизу') + '.')
         return
       }
+      case 'space': {
+        config.isSpaceEnabled = (isSpaceEnabled ^= true)
+        saveConfig()
+		sendTitle('§fПробел: ' + (isSpaceEnabled ? '§aвключен' : '§cвыключен') + '.')
+        return
+      }
+      case 'mouse': {
+        config.isMouseButtonsEnabled = (isMouseButtonsEnabled ^= true)
+        saveConfig()
+		sendTitle('§fКнопки мыши: ' + (isMouseButtonsEnabled ? '§aвключены' : '§cвыключены') + '.')
+        return
+      }
       case 'help':
       default: {
         sendHelp('keystrokes',
           ' §6help §8- §fпомощь по команде\n' +
           ' §6toggle §8- §fвключение/отключение Keystrokes\n' +
           ' §6rainbow §8- §fвключение/отключение радужного цвета\n' +
+          ' §6space §8- §fвключение/отключение отображения пробела\n' +
+          ' §6mouse §8- §fвключение/отключение кнопок мыши\n' +
           ' §6position §8- §fсмена позиции Keystrokes'
         )
         return
