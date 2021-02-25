@@ -259,18 +259,14 @@ function drawCoords() {
   fontRenderer.drawStringWithShadow(overRender, coordsX, coordsY, color)
 }
 
-function drawArmor() {
-  drawArmor0(39, armorX, armorY)
-  drawArmor0(38, armorX, armorY + 16)
-  drawArmor0(37, armorX, armorY + 32)
-  drawArmor0(36, armorX, armorY + 48)
-}
-
 Events.on(this, 'gui_overlay_render', function() {
   drawOnlineBoard()
   drawKeystrokes()
   drawCoords()
-  drawArmor()
+  drawArmor(39, armorX, armorY)
+  drawArmor(38, armorX, armorY + 16)
+  drawArmor(37, armorX, armorY + 32)
+  drawArmor(36, armorX, armorY + 48)
 })
 
 function isInt(input){
